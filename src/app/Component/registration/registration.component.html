@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="registration.component.css">
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"></script>
+
+</head>
+<body>
+    <div class="Container">
+        <div class="left">
+            <img src="assets/left-image3jpg.jpg" alt="Left Image">
+       </div>
+       <div class="right">
+        <h2>Sign Up</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="submitForm()">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" formControlName="fullname">
+                <div *ngIf="registerForm.get('fullname')?.invalid && (registerForm.get('fullname')?.dirty || registerForm.get('fullname')?.touched)">
+                    <small *ngIf="registerForm.get('fullname')?.errors?.['required']">Full Name is required</small>
+                    <small *ngIf="registerForm.get('fullname')?.errors?.['minlength']">Full Name must be at least five characters long</small>
+                    <small *ngIf="registerForm.get('fullname')?.errors?.['maxlength']">Full Name cannot be more than 20 characters long</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone" >Phone Number</label>
+                <div class="email-input">
+                    <input type="text" id="phone" formControlName="phone">
+                    <button type="button" (click)=" sendOTP()">Verified</button>
+                </div>
+                <div *ngIf="registerForm.get('phone')?.invalid && (registerForm.get('phone')?.dirty || registerForm.get('phone')?.touched)">
+                    <small *ngIf="registerForm.get('phone')?.errors?.['required']">Phone Number is required</small>
+                    <small *ngIf="registerForm.get('phone')?.errors?.['pattern']">Invalid phone number formate</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" formControlName="username">
+                <div *ngIf="registerForm.get('username')?.invalid && (registerForm.get('username')?.dirty || registerForm.get('username')?.touched)">
+                    <small *ngIf="registerForm.get('username')?.errors?.['required']">Username is required</small>
+                    <small *ngIf="registerForm.get('username')?.errors?.['pattern']">Username must be alphanumeric and between 8 and 20 characters long</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" formControlName="email">
+                <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)">
+                    <small *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</small>
+                    <small *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email format</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" formControlName="password">
+                <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)">
+                    <small *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</small>
+                    <small *ngIf="registerForm.get('password')?.errors?.['pattern']">Password must be between 8 and 20 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" formControlName="confirmPassword">
+                <small *ngIf="registerForm.get('confirmPassword')?.errors?.['misMatch']" class="text-danger">
+                    Passwords do not match.
+                </small>
+            </div>
+            <div class="form-group">
+                <div id="recaptcha-container"></div>
+            </div>
+            <button type="submit" [disabled]="!isOtpSent || registerForm.invalid">Sign Up</button>
+        </form>
+        <p>Already a member? <a routerLink="/login">Login</a></p>
+        </div>
+       <div  class="otp-overlay" *ngIf="isOtpModalVisible">
+            <div class="otp-modal">
+                <h3>Enter OTP</h3>
+                <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
+                    <div class="form-group">
+                        <input type="text" placeholder="Enter OTP" formControlName="otp">
+                        <div *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched">
+                            <small *ngIf="otpForm.get('otp')?.errors?.['required']">OTP is required</small>
+                            <small *ngIf="otpForm.get('otp')?.errors?.['minlength'] || otpForm.get('otp')?.errors?.['maxlength']">OTP must be 6 digits long</small>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button type="button" (click)="verifyOTP()">Verify OTP</button>
+                        <button type="button" (click)="resendOTP()">RESEND OTP</button>
+                        <button type="button" (click)="resetOTP()">RESET</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> 
+</body>
+</html>
+
